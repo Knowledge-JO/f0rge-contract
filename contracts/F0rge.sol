@@ -4,6 +4,7 @@ pragma solidity 0.8.20;
 import "./Token.sol";
 import "./nft.sol";
 
+
 contract F0rge {
     NFT[] public tokens; //
     mapping(uint => address) public indexToContract; //
@@ -28,9 +29,10 @@ contract F0rge {
         uint8 _tokenDecimals,
         address _ownerAddress,
         uint256 teamAllocation,
-        address teamAllocationAddress
+        address teamAllocationAddress,
+        address _modeAddress
     ) external {
-        Token newToken = new Token(name, symbol, _totalSupply, _holdingCap, _buyTax, _sellTax, _tokenDecimals, _ownerAddress);
+        Token newToken = new Token(name, symbol, _totalSupply, _holdingCap, _buyTax, _sellTax, _tokenDecimals, _ownerAddress, _modeAddress);
         uint256 totalSupply = _totalSupply * 10 ** _tokenDecimals;
         uint256 teamShare = totalSupply * teamAllocation / 100;
         // transfer to team wallet
