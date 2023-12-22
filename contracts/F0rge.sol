@@ -24,7 +24,7 @@ contract F0rge {
         uint256 totalSupply,
         uint _holdingCap
     ) external {
-        token newToken = new token(name, symbol, totalSupply, _holdingCap);
+        Token newToken = new Token(name, symbol, totalSupply, _holdingCap);
         newToken.transfer(msg.sender, totalSupply * (10 ** 18));
 
         newToken.approve(address(this), totalSupply * (10 ** 18));
@@ -39,7 +39,7 @@ contract F0rge {
     ) public {
         require(teamWallet != address(0), "Enter a valid amount");
         require(amount > 0, "Enter a value greater than 0");
-        token(tokenAddress).transfer(teamWallet, amount);
+        Token(tokenAddress).transfer(teamWallet, amount);
     }
 
     function maxtokensPertransaction(
