@@ -15,16 +15,21 @@ contract F0rge {
 
     function createToken(string memory name, string memory symbol, uint256 totalSupply, uint _holdingCap) external {
         token newToken = new token(name, symbol, totalSupply, _holdingCap);
+        newToken.transfer(msg.sender, totalSupply * (10 ** 18 ));
+
+        newToken.approve(address(this), totalSupply * (10 ** 18));
+
+        
         emit TokenCreated(address(newToken), name, symbol, totalSupply);
     }
 
     function teamAllocation(address teamWallet, uint256 amount, address tokenAddress) public {
         require(teamWallet != address(0), "Enter a valid amount");
-        require(amount < 0, "Enter a value greater than 0");
+        require(amount > 0, "Enter a value greater than 0");
         token(tokenAddress).transfer(teamWallet, amount);
     }
 
-    function maxtokensPertransaction(uint maxtoks, uint256 totalSupply) internal view {
+    function maxtokensPertransaction(uint maxtoks, uint256 totalSupply) internal pure{
         require(maxtoks < totalSupply);    
     }
 
@@ -69,5 +74,7 @@ contract F0rge {
     function getNFTbyIndexandId(uint _index, uint _id) public view returns (address _contract, address _owner, string memory _uri, uint supply) {
        NFT nft = tokens[_index];
         return(address(nft), nft.owner(), nft.uri(_id), nft.balanceOf(indexToOwner[_index], _id));
-    }    
+    }
+
+    
 }

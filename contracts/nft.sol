@@ -3,7 +3,7 @@ pragma solidity >=0.8.0 <=0.8.20;
 
 import {ERC1155} from "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
+import {Strings} from"@openzeppelin/contracts/utils/Strings.sol";
 
 contract NFT is ERC1155, Ownable {
     string[] public names; //array of names
@@ -13,9 +13,9 @@ contract NFT is ERC1155, Ownable {
     uint public mintFee = 0 wei; // 0 by default
 
     mapping(string => uint) public nametoId; //mapping the name to id
-    mapping(uint => string) public idToName; // mapping the id ot name
+    mapping(uint => string) public idtoName; // mapping the id ot name
 
-    constructor(string memory _contractName, string memory _uri, string memory _names, uint[] memory _ids) ERC1155(_uri) Ownable(msg.sender) {
+    constructor(string memory _contractName, string memory _uri, string[] memory _names, uint[] memory _ids) ERC1155(_uri) Ownable(msg.sender) {
         names = _names;
         ids = _ids;
         createMapping();
@@ -30,13 +30,13 @@ contract NFT is ERC1155, Ownable {
     function createMapping() private {
         for (uint id = 0; id< ids.length; id++) {
             nametoId[names[id]] = ids[id];
-            idToName[ids[id]] = names[id];
+            idtoName[ids[id]] = names[id];
         }
     }
 
     // set our url and make it opensea compatible
 
-    function url(uint256 _tokenid) override public view returns (string memory) {
+    function uri(uint256 _tokenid) override public view returns (string memory) {
         return string(
             abi.encodePacked(
                 baseMetadataurl,
