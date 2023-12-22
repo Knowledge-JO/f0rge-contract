@@ -21,39 +21,26 @@ contract F0rge {
     function createToken(
         string memory name,
         string memory symbol,
-        uint256 totalSupply,
-        uint _holdingCap
+        uint256 _totalSupply,
+        uint _holdingCap,
+        uint256 _buyTax,
+        uint256 _sellTax,
+        uint8 _tokenDecimals,
+        address _ownerAddress,
+        uint256 teamAllocation,
+        address teamAllocationAddress
     ) external {
-        Token newToken = new Token(name, symbol, totalSupply, _holdingCap);
-        newToken.transfer(msg.sender, totalSupply * (10 ** 18));
-
-        newToken.approve(address(this), totalSupply * (10 ** 18));
-
+        Token newToken = new Token(name, symbol, _totalSupply, _holdingCap, _buyTax, _sellTax, _tokenDecimals, _ownerAddress);
+        uint256 totalSupply = _totalSupply * 10 ** _tokenDecimals;
+        uint256 teamShare = totalSupply * teamAllocation / 100;
+        // transfer to team wallet
+        if(teamAllocation > 0) {
+            newToken.transfer(teamAllocationAddress, teamShare);
+            totalSupply -= teamShare;
+        }
+        newToken.transfer(msg.sender, totalSupply);
         emit TokenCreated(address(newToken), name, symbol, totalSupply);
     }
-
-    function teamAllocation(
-        address teamWallet,
-        uint256 amount,
-        address tokenAddress
-    ) public {
-        require(teamWallet != address(0), "Enter a valid amount");
-        require(amount > 0, "Enter a value greater than 0");
-        Token(tokenAddress).transfer(teamWallet, amount);
-    }
-
-    function maxtokensPertransaction(
-        uint maxtoks,
-        uint256 totalSupply
-    ) internal pure {
-        require(maxtoks < totalSupply);
-    }
-
-    function sniperAutoBurn() public {}
-
-    function buyTax() public {}
-
-    function sellTax() public {}
 
     function mintNFT(uint _index, string memory _name, uint256 amount) public {
         uint id = getIdByName(_index, _name);
