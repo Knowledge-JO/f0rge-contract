@@ -10,7 +10,6 @@ contract Token is ERC20, Ownable {
     uint holdingCapinPercent;
     uint256 private s_buyTax;
     uint256 private s_sellTax;
-    bool private s_salesActive;
     address private s_taxWallet;
     uint8 private s_tokenDecimals;
 
@@ -69,22 +68,11 @@ contract Token is ERC20, Ownable {
         s_taxWallet = _newTaxWallet;
     }
 
-    function flipSalesState () public onlyOwner {
-        s_salesActive = !s_salesActive;
-    }
-
-    function getSalesState() public view returns(bool){
-        return s_salesActive;
-    }
-
     function getTax() public view returns(uint256, uint256){
         return (s_buyTax, s_sellTax);
     }
 
     function _update(address from, address to, uint256 value) internal virtual override {
-        require(s_salesActive, "sales not open yet");
-        require(s_taxWallet != address(0), "tax wallet is zero address, set tax wallet");
-
         // check if max holdings exceeded
         if(automatedMarketMakerPairs[from]){
             require(balanceOf(to) + value <= getMaxHoldings(), "You've exceeded the amount of token you can purchase");
