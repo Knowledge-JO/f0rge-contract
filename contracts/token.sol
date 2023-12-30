@@ -4,9 +4,6 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
-contract Register {
-    function register(address _recipient) public returns (uint256 tokenId) {}
-}
 
 contract Token is ERC20, Ownable {
     address public s_owner;
@@ -27,15 +24,12 @@ contract Token is ERC20, Ownable {
         uint256 _buyTax,
         uint _sellTax,
         uint8 _tokenDecimals,
-        address _ownerAddress,
-        address _modeAddress
+        address _ownerAddress
     ) ERC20(name, symbol) Ownable(_ownerAddress) {
         holdingCapinPercent = _holdingCap;
         s_buyTax = _buyTax;
         s_sellTax = _sellTax;
         s_tokenDecimals = _tokenDecimals;
-        Register sfsContract = Register(_modeAddress); //instance of SFS contract
-        sfsContract.register(_ownerAddress); // register this contract and send NFT to owneraddress to claim fees.
         _mint(msg.sender, totalSupply * (10 ** uint256(decimals())));
     }
 
