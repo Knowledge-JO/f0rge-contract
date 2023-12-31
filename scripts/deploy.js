@@ -7,22 +7,26 @@
 const hre = require("hardhat");
 
 async function main() {
-  const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-  const unlockTime = currentTimestampInSeconds + 60;
-
-  const lockedAmount = hre.ethers.parseEther("0.001");
-
-  const lock = await hre.ethers.deployContract("Lock", [unlockTime], {
-    value: lockedAmount,
-  });
-
-  await lock.waitForDeployment();
-
-  console.log(
-    `Lock with ${ethers.formatEther(
-      lockedAmount
-    )}ETH and unlock timestamp ${unlockTime} deployed to ${lock.target}`
-  );
+  const [owner] = await ethers.getSigners();
+  // deploy factory
+  const forge = await hre.ethers.deployContract("F0rge", owner)
+  await forge.waitForDeployment()
+  console.log("Deployed factory at: ", forge.target)
+  // create token
+  console.log("creating token...")
+  const tx = await forge.connect(owner).createToken("MyTOken",
+    "MYT",
+    10000000,
+    10,
+    5,
+    5,
+    18,
+    "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    5,
+    "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+  )
+  const receipt = await tx.wait()
+  console.log("token created")
 }
 
 // We recommend this pattern to be able to use async/await everywhere
